@@ -23,9 +23,9 @@ public class ValidacaoTutorComLimiteDeAdocoes implements ValidacaoSolicitacaoAdo
 
     public void validar(SolicitacaoAdocaoDto dto) {
         List<Adocao> adocoes = adocaoRepository.findAll();
+        int contador = 0;
         Tutor tutor = tutorRepository.getReferenceById(dto.idTutor());
         for (Adocao a : adocoes) {
-            int contador = 0;
             if (a.getTutor() == tutor && a.getStatus() == StatusAdocao.APROVADO) {
                 contador = contador + 1;
             }

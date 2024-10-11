@@ -48,7 +48,7 @@ class AdocaoControllerTest {
         ).andReturn().getResponse();
 
         //ASSERT
-        //Esperado 400 no primeiro campo e retornar o estado b=do response no segundo campo
+        //Esperado 400 no primeiro campo e retornar o estado do response no segundo campo
         Assertions.assertEquals(400, response.getStatus());
     }
 

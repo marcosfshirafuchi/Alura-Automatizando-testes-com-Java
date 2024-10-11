@@ -1,10 +1,9 @@
-package br.com.alura.adopet;
+package br.com.alura.adopet.api.validacoes;
 
 import br.com.alura.adopet.api.dto.SolicitacaoAdocaoDto;
 import br.com.alura.adopet.api.exception.ValidacaoException;
 import br.com.alura.adopet.api.model.Pet;
 import br.com.alura.adopet.api.repository.PetRepository;
-import br.com.alura.adopet.api.validacoes.ValidacaoPetDisponivel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,7 +11,9 @@ import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-//Mockito intercept essa classe
+
+
+//Mockito intercepta essa classe
 @ExtendWith(MockitoExtension.class)
 public class ValidacaoPetDisponivelTest {
     //Declarou o validador como sendo um atributo. O PetRepository vai ser injetado automaticamente no ValidacaoPetDisponivel
@@ -34,11 +35,11 @@ public class ValidacaoPetDisponivelTest {
 
 
         //ARRANGE
-//        SolicitacaoAdocaoDto dto = new SolicitacaoAdocaoDto(
-//                7l,
-//                2l,
-//                "Motivo qualquer"
-//        );
+        SolicitacaoAdocaoDto dto = new SolicitacaoAdocaoDto(
+                7l,
+                2l,
+                "Motivo qualquer"
+        );
         //ARRANGE
         //Chama o método do petRepository, com a variavel dto.idPet()  e da a resposta pet do método
         BDDMockito.given(petRepository.getReferenceById(dto.idPet())).willReturn(pet);
@@ -57,11 +58,11 @@ public class ValidacaoPetDisponivelTest {
 
 
         //ARRANGE
-//        SolicitacaoAdocaoDto dto = new SolicitacaoAdocaoDto(
-//                7l,
-//                2l,
-//                "Motivo qualquer"
-//        );
+        SolicitacaoAdocaoDto dto = new SolicitacaoAdocaoDto(
+                7l,
+                2l,
+                "Motivo qualquer"
+        );
         //ARRANGE
         //Chama o método do petRepository, com a variavel dto.idPet()  e da a resposta pet do método
         BDDMockito.given(petRepository.getReferenceById(dto.idPet())).willReturn(pet);
