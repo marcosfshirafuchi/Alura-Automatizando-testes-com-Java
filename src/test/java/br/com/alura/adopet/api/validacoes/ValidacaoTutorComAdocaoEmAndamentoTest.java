@@ -73,7 +73,7 @@ class ValidacaoTutorComAdocaoEmAndamentoTest {
         when(adocaoRepository.findAll()).thenReturn(Collections.emptyList());
 
         //Act + Assert:
-        //Usamos assertDoesNotThrow para verificar se nenhuma exceção é lançada ao chamar validador.validar(dto).
+        //Usamos assertDoesNotThrow para verificar se nenhuma exceção é lançada ao chamar validacaoTutorComAdocaoEmAndamento.validar(dto).
         assertDoesNotThrow(() -> validacaoTutorComAdocaoEmAndamento.validar(dto));
     }
 }
