@@ -24,16 +24,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
-//Essa anotação vai ajudar a fazer a injeção de indepencia na classe de test
 @SpringBootTest
-//Essa anotação AutoConfigureMockMvc vai o Autowired a fazer a injeção de indepencia
 @AutoConfigureMockMvc
-class AbrigoControllerTest {
+public class AbrigoControllerTest {
     @MockBean
     private AbrigoService abrigoService;
 
-    @Mock
+    @MockBean
     private PetService petService;
 
     @Mock
@@ -43,7 +40,7 @@ class AbrigoControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    void deveriaDevolverCodigo200ParaRequisicaoDeListarAbrigos() throws Exception{
+    void deveriaDevolverCodigo200ParaRequisicaoDeListarAbrigos() throws Exception {
         //ACT
         MockHttpServletResponse response = mockMvc.perform(
                 get("/abrigos")
@@ -54,15 +51,15 @@ class AbrigoControllerTest {
     }
 
     @Test
-    void deveriaDevolverCodigo200ParaRequisicaoDeCadastrarAbrigo() throws Exception{
+    void deveriaDevolverCodigo200ParaRequisicaoDeCadastrarAbrigo() throws Exception {
         //ARRANGE
         String json = """
-            {
-                "nome": "Abrigo feliz",
-                "telefone": "(94)0000-9090",
-                "email": "email@example.com.br"
-            }
-            """;
+                {
+                    "nome": "Abrigo feliz",
+                    "telefone": "(94)0000-9090",
+                    "email": "email@example.com.br"
+                }
+                """;
 
         //ACT
         MockHttpServletResponse response = mockMvc.perform(
@@ -76,66 +73,88 @@ class AbrigoControllerTest {
     }
 
     @Test
-    void deveriaDevolverCodigo200ParaRequisicaoDeListarPetsDoAbrigoPorNome() throws  Exception{
+    void deveriaDevolverCodigo400ParaRequisicaoDeCadastrarAbrigo() throws Exception {
         //ARRANGE
-        String nome = "Abrigo feliz";
+        String json = """
+                {
+                    "nome": "Abrigo feliz",
+                    "telefone": "(94)0000-90900",
+                    "email": "email@example.com.br"
+                }
+                """;
 
         //ACT
+        MockHttpServletResponse response = mockMvc.perform(
+                post("/abrigos")
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        //ASSERT
+        assertEquals(400,response.getStatus());
+    }
+
+    @Test
+    void deveriaDevolverCodigo200ParaRequisicaoDeListarPetsDoAbrigoPorNome() throws Exception {
+        //Arrange
+        String nome = "Abrigo feliz";
+
+        //Act
         MockHttpServletResponse response = mockMvc.perform(
                 get("/abrigos/{nome}/pets",nome)
         ).andReturn().getResponse();
 
-        //ASSERT
+        //Assert
         assertEquals(200,response.getStatus());
     }
 
     @Test
-    void deveriaDevolverCodigo200ParaRequisicaoDeListaretsDoAbrigoPorId() throws Exception{
-        //ARRANGE
+    void deveriaDevolverCodigo200ParaRequisicaoDeListarPetsDoAbrigoPorId() throws Exception {
+        //Arrange
         String id = "1";
 
-        //ACT
+        //Act
         MockHttpServletResponse response = mockMvc.perform(
                 get("/abrigos/{id}/pets",id)
         ).andReturn().getResponse();
 
-        //ASSERT
+        //Assert
         assertEquals(200,response.getStatus());
     }
 
     @Test
-    void deveriaDevolverCodigo400ParaRequisicaoDeListarPetsDoAbrigoPorIdInvalido() throws Exception{
-        //ARRANGE
+    void deveriaDevolverCodigo400ParaRequisicaoDeListarPetsDoAbrigoPorIdInvalido() throws Exception {
+        //Arrange
         String id = "1";
         given(abrigoService.listarPetsDoAbrigo(id)).willThrow(ValidacaoException.class);
 
-        //ACT
+        //Act
         MockHttpServletResponse response = mockMvc.perform(
                 get("/abrigos/{id}/pets",id)
         ).andReturn().getResponse();
 
-        //ASSERT
-        assertEquals(404, response.getStatus());
+        //Assert
+        assertEquals(404,response.getStatus());
     }
 
     @Test
-    void deveriaDevolverCodigo400ParaRequisicaoDeListaPetsDoAbrigoPorNomeInvalido() throws Exception{
-        //ARRANGE
+    void deveriaDevolverCodigo400ParaRequisicaoDeListarPetsDoAbrigoPorNomeInvalido() throws Exception {
+        //Arrange
         String nome = "Miau";
         given(abrigoService.listarPetsDoAbrigo(nome)).willThrow(ValidacaoException.class);
 
-        //ACT
+        //Act
         MockHttpServletResponse response = mockMvc.perform(
                 get("/abrigos/{nome}/pets",nome)
         ).andReturn().getResponse();
 
-        //ASSERT
-        assertEquals(404, response.getStatus());
+        //Assert
+        assertEquals(404,response.getStatus());
     }
 
     @Test
-    void deveriaDevolverCodigo200ParaRequisicaoDeCadastrarPetPeloId() throws Exception{
-        //ARRANGE
+    void deveriaDevolverCodigo200ParaRequisicaoDeCadastrarPetPeloId() throws Exception {
+        //Arange
         String json = """
                 {
                     "tipo": "GATO",
@@ -149,119 +168,123 @@ class AbrigoControllerTest {
 
         String abrigoId = "1";
 
-        //ACT
+        //Act
         MockHttpServletResponse response = mockMvc.perform(
                 post("/abrigos/{abrigoId}/pets",abrigoId)
                         .content(json)
                         .contentType(MediaType.APPLICATION_JSON)
         ).andReturn().getResponse();
 
-        //ASSERT
+        //Assert
         assertEquals(200,response.getStatus());
     }
 
     @Test
-    void deveriaDevolverCodigo200ParaRequisicaoDeCadastrarPetPeloNome() throws Exception{
-        //ARRANGE
+    void deveriaDevolverCodigo200ParaRequisicaoDeCadastrarPetPeloNome() throws Exception {
+        //Arrange
         String json = """
                 {
                     "tipo": "GATO",
                     "nome": "Miau",
                     "raca": "padrao",
                     "idade": "5",
-                    "cor": "Parda",
+                    "cor" : "Parda",
                     "peso": "6.4"
                 }
                 """;
+
         String abrigoNome = "Abrigo feliz";
 
-        //ACT
+        //Act
         MockHttpServletResponse response = mockMvc.perform(
                 post("/abrigos/{abrigoNome}/pets",abrigoNome)
                         .content(json)
                         .contentType(MediaType.APPLICATION_JSON)
         ).andReturn().getResponse();
 
-        //ASSERT
+        //Assert
         assertEquals(200,response.getStatus());
     }
 
     @Test
-    void deveriaDevolverCodigo404ParaRequisicaoDeCadastrarPetAbrigoNaoEncontradoPeloId() throws Exception{
-        //ARRANGE
+    void deveriaDevolverCodigo404ParaRequisicaoDeCadastrarPetAbrigoNaoEncontradoPeloId() throws Exception {
+        //Arrange
         String json = """
                 {
                     "tipo": "GATO",
                     "nome": "Miau",
                     "raca": "padrao",
                     "idade": "5",
-                    "cor": "Parda",
+                    "cor" : "Parda",
                     "peso": "6.4"
                 }
                 """;
+
         String abrigoId = "1";
 
         given(abrigoService.carregarAbrigo(abrigoId)).willThrow(ValidacaoException.class);
 
-        //ACT
+        //Act
         MockHttpServletResponse response = mockMvc.perform(
                 post("/abrigos/{abrigoId}/pets",abrigoId)
                         .content(json)
                         .contentType(MediaType.APPLICATION_JSON)
         ).andReturn().getResponse();
 
-        //ASSERT
+        //Assert
         assertEquals(404,response.getStatus());
     }
 
     @Test
-    void deveriaDevolverCodigo404ParaRequisicaoDeCadastrarPetAbrigoNaoEncontradoPeloNome() throws Exception{
-        //ARRANGE
+    void deveriaDevolverCodigo404ParaRequisicaoDeCadastrarPetAbrigoNaoEncontradoPeloNome() throws Exception {
+        //Arrange
         String json = """
                 {
-                "tipo":"GATO",
-                "nome":"Miau",
-                "raca":"padrao",
-                "idade":"5",
-                "cor":"Parda",
-                "peso":"6.4"
+                    "tipo": "GATO",
+                    "nome": "Miau",
+                    "raca": "padrao",
+                    "idade": "5",
+                    "cor" : "Parda",
+                    "peso": "6.4"
                 }
                 """;
+
         String abrigoNome = "Abrigo legal";
+
         given(abrigoService.carregarAbrigo(abrigoNome)).willThrow(ValidacaoException.class);
 
-        //ACT
+        //Act
         MockHttpServletResponse response = mockMvc.perform(
                 post("/abrigos/{abrigoNome}/pets",abrigoNome)
                         .content(json)
                         .contentType(MediaType.APPLICATION_JSON)
         ).andReturn().getResponse();
 
-        //ASSERT
+        //Assert
         assertEquals(404,response.getStatus());
     }
 
     @Test
-    void deveriaDevolverCodigo400QuandoExceptionForLancadaNoCadastroDeAbrigo() throws Exception{
-        //ARRANGE
+    void deveriaDevolverCodigo400QuandoExceptionForLancadaNoCadastroDeAbrigo() throws Exception {
+        // ARRANGE
         String json = """
                 {
-                    "nome":"Abrigo Feliz",
-                    "telefone":"(94)0000-9090",
-                    "email":"email@example.com.br"
+                    "nome": "Abrigo Feliz",
+                    "telefone": "(94)0000-9090",
+                    "email": "email@example.com.br"
                 }
                 """;
 
-        //Simulando o comportamento do service lançando uma exceção de validação
+        // Simulando o comportamento do service lançando uma exceção de validação
         doThrow(new ValidacaoException("Erro na validação do abrigo"))
                 .when(abrigoService).cadastrar(any(CadastroAbrigoDto.class));
 
-        //ACT & ASSERT
+        // ACT & ASSERT
         mockMvc.perform(
-                post("/abrigos")
-                        .content(json)
-                        .contentType(MediaType.APPLICATION_JSON)
-        )
+                        post("/abrigos")
+                                .content(json)
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("Erro na validação do abrigo"));
     }
